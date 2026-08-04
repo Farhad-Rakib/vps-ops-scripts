@@ -11,6 +11,7 @@ See [USAGE.md](/Users/farhadrakib/Personal%20Projects/shell-scripts/USAGE.md) fo
 - `scripts/deploy-site.sh` - deploy another website on the same VPS
 - `scripts/configure-nginx-site.sh` - create an Nginx site for a domain
 - `scripts/db-backup.sh` - back up PostgreSQL, MySQL, MSSQL, or MongoDB
+- `scripts/install-backup-cron.sh` - install the scheduled backup cron entry
 - `scripts/setup-serilog.sh` - add Serilog packages to a .NET project
 
 ## Quick start

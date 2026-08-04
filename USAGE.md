@@ -86,7 +86,22 @@ Then run:
 bash scripts/db-backup.sh config.sh
 ```
 
-You can run the same script from cron for scheduled backups.
+To install the scheduled backup job automatically with the same config values, run:
+
+```bash
+sudo bash scripts/install-backup-cron.sh config.sh
+```
+
+The cron schedule comes from these config values:
+
+- `BACKUP_CRON_MINUTE`
+- `BACKUP_CRON_HOUR`
+- `BACKUP_CRON_DAY_OF_MONTH`
+- `BACKUP_CRON_MONTH`
+- `BACKUP_CRON_DAY_OF_WEEK`
+- `BACKUP_CRON_LOG_FILE`
+
+The installed cron entry reuses the values from `config.sh`, including `BACKUP_TYPE`, `BACKUP_NAME`, `BACKUP_HOST`, `BACKUP_PORT`, and credentials.
 
 ## 6. Add Serilog packages
 
