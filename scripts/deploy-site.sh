@@ -35,6 +35,11 @@ trap cleanup EXIT
   printf 'SITE_ROOT=%q\n' "${SITE_ROOT:-/var/www/${DOMAIN}/public}"
   printf 'NGINX_CLIENT_MAX_BODY_SIZE=%q\n' "${NGINX_CLIENT_MAX_BODY_SIZE:-50m}"
   printf 'SSL_EMAIL=%q\n' "${SSL_EMAIL:-}"
+  printf 'ENABLE_RATE_LIMIT=%q\n' "${ENABLE_RATE_LIMIT:-0}"
+  printf 'RATE_LIMIT_RPS=%q\n' "${RATE_LIMIT_RPS:-10}"
+  printf 'RATE_LIMIT_BURST=%q\n' "${RATE_LIMIT_BURST:-20}"
+  printf 'RATE_LIMIT_ZONE_SIZE=%q\n' "${RATE_LIMIT_ZONE_SIZE:-10m}"
+  printf 'RATE_LIMIT_NODELAY=%q\n' "${RATE_LIMIT_NODELAY:-1}"
 } >"$TEMP_CONFIG"
 
 bash "$SCRIPT_DIR/configure-nginx-site.sh" "$TEMP_CONFIG"

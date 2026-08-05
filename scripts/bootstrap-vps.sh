@@ -80,4 +80,21 @@ EOF
   systemctl enable mssql-server
 fi
 
+if is_true "${ENABLE_VSCODE:-0}"; then
+  log "installing vscode"
+  if [[ ! -f /usr/share/keyrings/packages.microsoft.gpg ]]; then
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/packages.microsoft.gpg
+  fi
+  cat > /etc/apt/sources.list.d/vscode.list <<EOF
+deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main
+EOF
+  apt_update
+  apt_install code
+fi
+
+if is_true "${ENABLE_FIREWALL:-0}"; then
+  log "configuring firewall"
+  bash "$SCRIPT_DIR/configure-firewall.sh" "$CONFIG_PATH"
+fi
+
 log "bootstrap complete"

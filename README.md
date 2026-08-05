@@ -13,6 +13,7 @@ See [USAGE.md](/Users/farhadrakib/Personal%20Projects/shell-scripts/USAGE.md) fo
 - `scripts/db-backup.sh` - back up PostgreSQL, MySQL, MSSQL, or MongoDB
 - `scripts/install-backup-cron.sh` - install the scheduled backup cron entry
 - `scripts/setup-serilog.sh` - add Serilog packages to a .NET project
+- `scripts/configure-firewall.sh` - configure ufw to only open necessary ports
 
 ## Quick start
 
@@ -62,6 +63,9 @@ Set any feature flag to `1` to enable it. Leave it at `0` to skip it.
 - `ENABLE_MSSQL`
 - `ENABLE_MONGO`
 - `ENABLE_SERILOG`
+- `ENABLE_VSCODE`
+- `ENABLE_FIREWALL`
+- `ENABLE_RATE_LIMIT`
 
 ## Notes
 
@@ -69,3 +73,6 @@ Set any feature flag to `1` to enable it. Leave it at `0` to skip it.
 - MSSQL and MongoDB install steps use the official vendor repositories.
 - `setup-serilog.sh` adds packages only; it does not rewrite your application code.
 - `deploy-site.sh` is the repeatable entry point for additional websites on the same server.
+- `configure-firewall.sh` uses `ufw` and only opens SSH plus whatever `ENABLE_*`/`FIREWALL_ALLOW_*` flags call for; database ports stay closed by default.
+- `ENABLE_VSCODE` installs the `code` CLI/editor package from Microsoft's apt repo; on a headless VPS this is mainly useful for `code tunnel` remote access.
+- `ENABLE_RATE_LIMIT` adds an nginx `limit_req_zone`/`limit_req` per site, keyed by client IP, using `RATE_LIMIT_RPS`/`RATE_LIMIT_BURST`.

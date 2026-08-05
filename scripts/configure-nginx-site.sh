@@ -25,7 +25,21 @@ if [[ -n "${SITE_EXTRA_SERVER_NAMES:-}" ]]; then
   server_names="$server_names ${SITE_EXTRA_SERVER_NAMES}"
 fi
 
+rate_limit_zone_directive=""
+rate_limit_directive=""
+if is_true "${ENABLE_RATE_LIMIT:-0}"; then
+  rate_limit_zone="rl_$(printf '%s' "$SITE_DOMAIN" | tr -c 'a-zA-Z0-9' '_')"
+  rate_limit_rps="${RATE_LIMIT_RPS:-10}"
+  rate_limit_burst="${RATE_LIMIT_BURST:-20}"
+  rate_limit_zone_size="${RATE_LIMIT_ZONE_SIZE:-10m}"
+  nodelay_flag=""
+  is_true "${RATE_LIMIT_NODELAY:-1}" && nodelay_flag=" nodelay"
+  rate_limit_zone_directive="limit_req_zone \$binary_remote_addr zone=${rate_limit_zone}:${rate_limit_zone_size} rate=${rate_limit_rps}r/s;"
+  rate_limit_directive="limit_req zone=${rate_limit_zone} burst=${rate_limit_burst}${nodelay_flag};"
+fi
+
 cat > "$SITE_CONF" <<EOF
+${rate_limit_zone_directive}
 server {
     listen 80;
     listen [::]:80;
@@ -37,6 +51,7 @@ server {
     }
 
     location / {
+        ${rate_limit_directive}
         proxy_pass http://127.0.0.1:${SITE_UPSTREAM_PORT};
         proxy_http_version 1.1;
         proxy_set_header Host \$host;
