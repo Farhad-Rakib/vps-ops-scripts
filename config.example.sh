@@ -84,3 +84,32 @@ SERILOG_PACKAGES=(
   "Serilog.Settings.Configuration"
   "Serilog.Sinks.Console"
 )
+
+# Application stack flags
+# Installs the runtime/SDK for each stack; LARAVEL also requires ENABLE_PHP=1.
+ENABLE_PHP=0
+ENABLE_NODEJS=0
+ENABLE_DJANGO=0
+ENABLE_DOTNET=0
+ENABLE_LARAVEL=0
+
+# PHP configuration (installed from the ondrej/php PPA)
+PHP_VERSION="8.3"
+
+# Node.js configuration (installed from the NodeSource repository)
+NODE_VERSION="20"
+
+# Django / Python configuration
+# A virtualenv is created in DJANGO_PROJECT_DIR and requirements.txt is
+# installed into it if the file is present.
+DJANGO_PROJECT_DIR="/opt/myapp"
+DJANGO_VENV_NAME="venv"
+
+# .NET SDK configuration (the SDK, for building/running .NET apps; this is
+# separate from ENABLE_MSSQL, which only needs the same Microsoft apt repo)
+DOTNET_VERSION="8.0"
+
+# Laravel configuration (requires ENABLE_PHP=1)
+# If LARAVEL_PROJECT_DIR already contains an artisan file, dependencies are
+# installed with `composer install`; otherwise a new project is created there.
+LARAVEL_PROJECT_DIR="/var/www/laravel-app"

@@ -30,6 +30,11 @@ Common flags:
 - `ENABLE_SERILOG=1` to allow Serilog package setup
 - `ENABLE_VSCODE=1` to install VS Code (`code`) from Microsoft's apt repo
 - `ENABLE_FIREWALL=1` to lock down ports with `ufw` (recommended, on by default)
+- `ENABLE_PHP=1` to install PHP
+- `ENABLE_NODEJS=1` to install Node.js
+- `ENABLE_DJANGO=1` to install Python/venv for Django apps
+- `ENABLE_DOTNET=1` to install the .NET SDK
+- `ENABLE_LARAVEL=1` to install Composer and set up a Laravel project (requires `ENABLE_PHP=1`)
 
 For website deployment, set these values in `config.sh`:
 
@@ -117,7 +122,25 @@ bash scripts/setup-serilog.sh config.sh
 
 Set `DOTNET_PROJECT_DIR` to the folder containing the `.csproj` file.
 
-## 7. Lock down the firewall
+## 7. Install application stacks
+
+Set any of these flags to `1` to install that stack:
+
+- `ENABLE_PHP=1` - installs PHP (`PHP_VERSION`, default `8.3`) from the `ondrej/php` PPA, plus `php-fpm` and common extensions (mysql, pgsql, xml, mbstring, curl, zip)
+- `ENABLE_NODEJS=1` - installs Node.js (`NODE_VERSION`, default `20`) from the NodeSource repository
+- `ENABLE_DJANGO=1` - installs `python3`/`python3-venv`/`python3-pip`, and creates a virtualenv (`DJANGO_VENV_NAME`, default `venv`) inside `DJANGO_PROJECT_DIR`; if `requirements.txt` exists there, it's installed into the virtualenv
+- `ENABLE_DOTNET=1` - installs the .NET SDK (`DOTNET_VERSION`, default `8.0`) from Microsoft's apt repo (the same repo `ENABLE_MSSQL` uses)
+- `ENABLE_LARAVEL=1` - requires `ENABLE_PHP=1`; installs Composer, then either creates a new Laravel project at `LARAVEL_PROJECT_DIR` or runs `composer install` there if an `artisan` file already exists
+
+Run it directly:
+
+```bash
+sudo bash scripts/setup-app-stacks.sh config.sh
+```
+
+It also runs automatically at the end of `bootstrap-vps.sh` if any of the above flags are enabled.
+
+## 8. Lock down the firewall
 
 When `ENABLE_FIREWALL=1`, the bootstrap script configures `ufw` to deny all
 incoming traffic by default and only allow what you've actually enabled:
@@ -139,7 +162,7 @@ You can also run it on its own, e.g. after changing flags on an existing server:
 sudo bash scripts/configure-firewall.sh config.sh
 ```
 
-## 8. Rate limit a site
+## 9. Rate limit a site
 
 When `ENABLE_RATE_LIMIT=1`, `configure-nginx-site.sh` (and `deploy-site.sh`)
 add an Nginx `limit_req_zone`/`limit_req` for that site, keyed by client IP:
@@ -162,7 +185,7 @@ sudo bash scripts/deploy-site.sh config.sh newdomain.com 4000
 
 For one VPS with multiple sites:
 
-1. Bootstrap once, with `ENABLE_FIREWALL=1` so only necessary ports are open.
+1. Bootstrap once, with `ENABLE_FIREWALL=1` so only necessary ports are open, and enable whichever `ENABLE_PHP` / `ENABLE_NODEJS` / `ENABLE_DJANGO` / `ENABLE_DOTNET` / `ENABLE_LARAVEL` flags your app needs.
 2. Deploy the first site, tuning `ENABLE_RATE_LIMIT` and its `RATE_LIMIT_*` values if needed.
 3. Deploy each new site with `deploy-site.sh`.
 4. Keep your database backup job separate.

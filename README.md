@@ -13,6 +13,7 @@ See [USAGE.md](/Users/farhadrakib/Personal%20Projects/shell-scripts/USAGE.md) fo
 - `scripts/db-backup.sh` - back up PostgreSQL, MySQL, MSSQL, or MongoDB
 - `scripts/install-backup-cron.sh` - install the scheduled backup cron entry
 - `scripts/setup-serilog.sh` - add Serilog packages to a .NET project
+- `scripts/setup-app-stacks.sh` - install PHP, Node.js, Django (Python), the .NET SDK, and/or Laravel
 - `scripts/configure-firewall.sh` - configure ufw to only open necessary ports
 
 ## Quick start
@@ -51,6 +52,16 @@ bash scripts/db-backup.sh config.sh
 bash scripts/setup-serilog.sh config.sh
 ```
 
+7. Install application stacks (PHP, Node.js, Django, .NET SDK, Laravel):
+
+```bash
+sudo bash scripts/setup-app-stacks.sh config.sh
+```
+
+This also runs automatically from `bootstrap-vps.sh` if any of the
+`ENABLE_PHP` / `ENABLE_NODEJS` / `ENABLE_DJANGO` / `ENABLE_DOTNET` /
+`ENABLE_LARAVEL` flags are set.
+
 ## Flags
 
 Set any feature flag to `1` to enable it. Leave it at `0` to skip it.
@@ -66,6 +77,11 @@ Set any feature flag to `1` to enable it. Leave it at `0` to skip it.
 - `ENABLE_VSCODE`
 - `ENABLE_FIREWALL`
 - `ENABLE_RATE_LIMIT`
+- `ENABLE_PHP`
+- `ENABLE_NODEJS`
+- `ENABLE_DJANGO`
+- `ENABLE_DOTNET`
+- `ENABLE_LARAVEL` (requires `ENABLE_PHP`)
 
 ## Notes
 
@@ -76,3 +92,4 @@ Set any feature flag to `1` to enable it. Leave it at `0` to skip it.
 - `configure-firewall.sh` uses `ufw` and only opens SSH plus whatever `ENABLE_*`/`FIREWALL_ALLOW_*` flags call for; database ports stay closed by default.
 - `ENABLE_VSCODE` installs the `code` CLI/editor package from Microsoft's apt repo; on a headless VPS this is mainly useful for `code tunnel` remote access.
 - `ENABLE_RATE_LIMIT` adds an nginx `limit_req_zone`/`limit_req` per site, keyed by client IP, using `RATE_LIMIT_RPS`/`RATE_LIMIT_BURST`.
+- `setup-app-stacks.sh` installs PHP from the `ondrej/php` PPA, Node.js from the NodeSource repo, Python/venv for Django, the .NET SDK from Microsoft's apt repo, and Composer + Laravel (on top of PHP). `DJANGO_PROJECT_DIR` gets a virtualenv with `requirements.txt` installed if present; `LARAVEL_PROJECT_DIR` gets a new `composer create-project laravel/laravel` or a `composer install` if a project already exists there.

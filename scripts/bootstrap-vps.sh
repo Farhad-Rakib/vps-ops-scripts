@@ -92,6 +92,12 @@ EOF
   apt_install code
 fi
 
+if is_true "${ENABLE_PHP:-0}" || is_true "${ENABLE_NODEJS:-0}" || is_true "${ENABLE_DJANGO:-0}" || \
+   is_true "${ENABLE_DOTNET:-0}" || is_true "${ENABLE_LARAVEL:-0}"; then
+  log "configuring application stacks"
+  bash "$SCRIPT_DIR/setup-app-stacks.sh" "$CONFIG_PATH"
+fi
+
 if is_true "${ENABLE_FIREWALL:-0}"; then
   log "configuring firewall"
   bash "$SCRIPT_DIR/configure-firewall.sh" "$CONFIG_PATH"
